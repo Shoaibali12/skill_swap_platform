@@ -1,9 +1,10 @@
+import React from "react";
+import LandingPage from "./pages/landingPage";
+
 function App() {
   return (
     <div>
-      <h1 className=" bg-blue-900 text-white">
-        Hello welcome to skill swap platform
-      </h1>
+      <LandingPage />
     </div>
   );
 }
