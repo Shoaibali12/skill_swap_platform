@@ -44,7 +44,7 @@ const Signup = () => {
       if (!response.ok) throw new Error(data.message || "Signup failed");
 
       // Redirect to home page after successful signup
-      navigate("/");
+      navigate("/signin");
     } catch (err) {
       setError(err.message);
     } finally {
