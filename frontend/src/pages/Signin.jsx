@@ -1,16 +1,20 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { signinUser } from "../redux/authSlice";
 import Navbar from "../components/Navbar";
-import loginImage from "../assets/login-image.jpg";
+import loginImage from "../assets/login-image.jpg"; // Ensure this image is in your project
 
 const Signin = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const dispatch = useDispatch();
+  const { loading, error, token } = useSelector((state) => state.auth);
+  const [formData, setFormData] = useState({ email: "", password: "" });
+
+  // Redirect if user is already logged in
+  useEffect(() => {
+    if (token) navigate("/");
+  }, [token, navigate]);
 
   // Handle input changes
   const handleChange = (e) => {
@@ -18,41 +22,20 @@ const Signin = () => {
   };
 
   // Handle form submission
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError("");
-
-    try {
-      const response = await fetch("http://localhost:5000/api/auth/signin", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.message || "Sign-in failed");
-
-      // Store token for authentication
-      localStorage.setItem("token", data.token);
-      navigate("/");
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+    dispatch(signinUser(formData)); // Redux handles API call
   };
 
   return (
     <div className="bg-gray-100 min-h-screen flex flex-col">
-      {/* Navbar */}
       <Navbar />
 
       {/* Sign-In Page Layout */}
-      <div className="flex flex-grow items-center justify-center px-6 py-12">
-        <div className="bg-white shadow-lg rounded-lg overflow-hidden flex w-full max-w-4xl">
-          {/* Left Section - Image */}
-          <div className="hidden md:block w-1/2">
+      <div className="flex flex-grow items-center justify-center px-4 py-12">
+        <div className="bg-white shadow-lg rounded-lg overflow-hidden flex flex-col md:flex-row w-full max-w-4xl">
+          {/* Left Section - Image (Hidden on Small Screens) */}
+          <div className="w-full md:w-1/2 hidden md:flex items-center justify-center bg-gray-200">
             <img
               src={loginImage}
               alt="Login"
@@ -61,7 +44,7 @@ const Signin = () => {
           </div>
 
           {/* Right Section - Sign-In Form */}
-          <div className="w-full md:w-1/2 p-10">
+          <div className="w-full md:w-1/2 p-8 sm:p-10 flex flex-col justify-center">
             <h2 className="text-3xl font-bold text-center text-red-500 mb-6">
               Welcome Back to SkillSwap
             </h2>
