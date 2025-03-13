@@ -13,7 +13,7 @@ const Signin = () => {
 
   // Redirect if user is already logged in
   useEffect(() => {
-    if (token) navigate("/");
+    if (token) navigate("/dashboard");
   }, [token, navigate]);
 
   // Handle input changes
